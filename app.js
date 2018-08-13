@@ -13,6 +13,12 @@ var config = require('./config');
 // 2일차 31 page  수정 - 대화 기록을 위한 로그 모듈 추가 
 var log = require('./db/log');
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// 2일차 55 page  수정 - 측정을 위한 모듈 실행 코드 추가 
+const appInsights = require("applicationinsights");
+appInsights.setup("c953574e-c381-4a21-882c-cfbf320df914");
+appInsights.start();
+//------------------------------------------------------------------------------
 
 // Setup Restify Server
 var server = restify.createServer();
