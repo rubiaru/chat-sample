@@ -71,6 +71,8 @@ var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azu
 var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
 
+//------------------------------------------------------------------------------
+// 2일차 33 page  수정 - 대화 기록을 위한 디비 모듈 초기화   
 // middleware logging
 bot.use({
     receive: function (event, next) {
@@ -82,6 +84,7 @@ bot.use({
         next();
     }
 });
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // 2일차 15 page  수정 - 대화 다이얼 로그 샘플
