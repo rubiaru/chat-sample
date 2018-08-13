@@ -9,10 +9,21 @@ var botbuilder_azure = require("botbuilder-azure");
 // 2일차 6 page  수정 - 로컬 실행용 환경 변수 값 
 var config = require('./config');
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// 2일차 31 page  수정 - 대화 기록을 위한 로그 모듈 추가 
+var log = require('./db/log');
+//------------------------------------------------------------------------------
+
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
-   console.log('%s listening to %s', server.name, server.url); 
+    console.log('%s listening to %s', server.name, server.url); 
+    //------------------------------------------------------------------------------
+    // 2일차 32 page  수정 - 대화 기록을 위한 디비 모듈 초기화    
+    log.Init(function() {
+        console.log('챗봇 로그 디비 초기화 성공');
+    });
+    //------------------------------------------------------------------------------
 });
   
 // Create chat connector for communicating with the Bot Framework Service
@@ -60,6 +71,17 @@ var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azu
 var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
 
+// middleware logging
+bot.use({
+    receive: function (event, next) {
+        log.Log(event,() => {})
+        next();
+    },
+    send: function (event, next) {
+        log.Log(event,() => {})
+        next();
+    }
+});
 
 //------------------------------------------------------------------------------
 // 2일차 15 page  수정 - 대화 다이얼 로그 샘플
@@ -92,7 +114,10 @@ bot.dialog('/', [
     function (session, results) {
         session.userData.location = results.response;
         session.send(`${session.userData.location} 지역이요? 알겠습니다.`);
-        builder.Prompts.choice(session, "오늘 날씨를 알려드릴까요. 주간 날씨를 알려드릴까요", ["오늘날씨", "주간날씨"], { listStyle: builder.ListStyle.button });        
+        builder.Prompts.choice(
+            session,
+            "오늘 날씨를 알려드릴까요. 주간 날씨를 알려드릴까요", ["오늘날씨", "주간날씨"],
+            { listStyle: builder.ListStyle.button });        
     },
     function (session, results) {
         session.userData.weatherType = results.response.entity;
