@@ -16,7 +16,11 @@ var log = require('./db/log');
 //------------------------------------------------------------------------------
 // 2일차 55 page  수정 - 측정을 위한 모듈 실행 코드 추가 
 const appInsights = require("applicationinsights");
+<<<<<<< HEAD
 appInsights.setup(config.dev.ApplicationInsights.key);
+=======
+appInsights.setup("c953574e-c381-4a21-882c-cfbf320df914");
+>>>>>>> 739b301bf9cc74470edbe3935ba2c0908d675223
 appInsights.start();
 //------------------------------------------------------------------------------
 
