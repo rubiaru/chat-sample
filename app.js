@@ -87,6 +87,15 @@ bot.use({
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+// 2일차 46 page  수정 - LUIS 서비스 연동   
+// Create a recognizer that gets intents from LUIS, and add it to the bot
+const LuisModelUrl = config.dev.Luis.url;
+console.log(`connect LUIS ${LuisModelUrl}`);
+var recognizer = new builder.LuisRecognizer(LuisModelUrl);
+bot.recognizer(recognizer);
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // 2일차 15 page  수정 - 대화 다이얼 로그 샘플
 // https://docs.microsoft.com/en-us/azure/bot-service/dotnet/bot-builder-dotnet-activities?view=azure-bot-service-3.0
 // conversationUpdate 참고
@@ -99,6 +108,21 @@ bot.on('conversationUpdate', function (message) {
         });
     }
 });
+
+//------------------------------------------------------------------------------
+// 2일차 50 page  수정 - LUIS 서비스 연동   
+// 예) 날씨문의 
+// matches 영역에 직접 작성한 intent 명을 입력하시고, 응답 문구를 수정하세요.
+bot.dialog('날씨문의Dialog',
+    (session) => {
+        session.send('오늘 날씨는 온도 O도 습도 O%입니다.');
+        session.endDialog();
+    }
+).triggerAction({
+    matches: '날씨문의'
+});
+//------------------------------------------------------------------------------
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 // 2일차 16 page  수정 - 대화 다이얼 로그 샘플
@@ -108,29 +132,30 @@ bot.on('conversationUpdate', function (message) {
 //        session.send('You said ' + session.message.text);
 //});
 //------------------------------------------------------------------------------
-bot.dialog('/', [
-    function (session) {
-        // session.send('You said ' + session.message.text);
-        session.send('안녕하세요. 날씨 알림 챗봇입니다.');        
-        builder.Prompts.text(session, "알고 싶은 지역을 알려주세요.");
-    },
-    function (session, results) {
-        session.userData.location = results.response;
-        session.send(`${session.userData.location} 지역이요? 알겠습니다.`);
-        builder.Prompts.choice(
-            session,
-            "오늘 날씨를 알려드릴까요. 주간 날씨를 알려드릴까요", ["오늘날씨", "주간날씨"],
-            { listStyle: builder.ListStyle.button });        
-    },
-    function (session, results) {
-        session.userData.weatherType = results.response.entity;
-        if (session.userData.weatherType == "오늘날씨") {
-            session.send("오늘 날씨는 O도입니다.");
-        } else if (session.userData.weatherType == "주간날씨") {
-            session.send("주간 날씨는 O요일 O도, O요일 O도, O요일 O도입니다.");
-        } else {
-            session.send("대화를 종료합니다.");    
-            session.endDialog();
-        }
-    },
-]);
+ bot.dialog('/', [
+     function (session) {
+         // session.send('You said ' + session.message.text);
+         session.send('안녕하세요. 날씨 알림 챗봇입니다.');        
+         builder.Prompts.text(session, "알고 싶은 지역을 알려주세요.");
+     },
+     function (session, results) {
+         session.userData.location = results.response;
+         session.send(`${session.userData.location} 지역이요? 알겠습니다.`);
+         builder.Prompts.choice(
+             session,
+             "오늘 날씨를 알려드릴까요. 주간 날씨를 알려드릴까요", ["오늘날씨", "주간날씨"],
+             { listStyle: builder.ListStyle.button });        
+     },
+     function (session, results) {
+         session.userData.weatherType = results.response.entity;
+         if (session.userData.weatherType == "오늘날씨") {
+             session.send("오늘 날씨는 O도입니다.");
+         } else if (session.userData.weatherType == "주간날씨") {
+             session.send("주간 날씨는 O요일 O도, O요일 O도, O요일 O도입니다.");
+         } else {
+             session.send("대화를 종료합니다.");    
+             session.endDialog();
+         }
+     },
+ ]);
+
