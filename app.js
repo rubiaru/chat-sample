@@ -6,18 +6,17 @@ var restify = require('restify');
 var builder = require('botbuilder');
 var botbuilder_azure = require("botbuilder-azure");
 //------------------------------------------------------------------------------
-// 2일차 6 page  수정 - 로컬 실행용 환경 변수 값 
-var config = require('./config');
+// 2일차 5 page  수정 - 로컬 실행용 환경 변수 값 
+require('dotenv').config();
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// 2일차 31 page  수정 - 대화 기록을 위한 로그 모듈 추가 
+// 2일차 29 page  수정 - 대화 기록을 위한 로그 모듈 추가 
 var log = require('./db/log');
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// 2일차 55 page  수정 - 측정을 위한 모듈 실행 코드 추가 
+// 2일차 53 page  수정 - 측정을 위한 모듈 실행 코드 추가 
 const appInsights = require("applicationinsights");
-// appInsights.setup(config.dev.ApplicationInsights.key);
-appInsights.setup(process.env.ApplicationInsightsKey || config.dev.ApplicationInsights.key);
+appInsights.setup(process.env.ApplicationInsightsKey);
 appInsights.start();
 //------------------------------------------------------------------------------
 
@@ -43,8 +42,8 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 //});
 //------------------------------------------------------------------------------
 var connector = new builder.ChatConnector({
-    appId: process.env.MicrosoftAppId || config.dev.MicrosoftAppId,
-    appPassword: process.env.MicrosoftAppPassword || config.dev.MicrosoftAppPassword,
+    appId: process.env.MicrosoftAppId,
+    appPassword: process.env.MicrosoftAppPassword,
     openIdMetadata: process.env.BotOpenIdMetadata
 });
 
@@ -59,7 +58,7 @@ server.post('/api/messages', connector.listen());
 
 var tableName = 'botdata';
 //------------------------------------------------------------------------------
-// 2일차 7 page  수정 - 로컬 실행용 환경 변수 값 
+// 2일차 6 page  수정 - 로컬 실행용 환경 변수 값 
 // var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.env['AzureWebJobsStorage']);
 if (process.env['AzureWebJobsStorage']) {
     var azureTableClient = new botbuilder_azure.AzureTableClient(
@@ -68,8 +67,8 @@ if (process.env['AzureWebJobsStorage']) {
 } else {
     var azureTableClient = new botbuilder_azure.AzureTableClient(
         tableName,
-        config.dev.AzureWebJobsStorage.accountName,
-        config.dev.AzureWebJobsStorage.accountKey);
+        process.env.AzureWebJobsStorageAccountName,
+        process.env.AzureWebJobsStorageAccountKey);
 }
 //------------------------------------------------------------------------------
 var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azureTableClient);
@@ -79,7 +78,7 @@ var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
 
 //------------------------------------------------------------------------------
-// 2일차 33 page  수정 - 대화 기록을 위한 디비 모듈 초기화   
+// 2일차 32 page  수정 - 대화 기록을 위한 디비 모듈 초기화   
 // middleware logging
 bot.use({
     receive: function (event, next) {
@@ -94,17 +93,16 @@ bot.use({
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// 2일차 46 page  수정 - LUIS 서비스 연동   
+// 2일차 48 page  수정 - LUIS 서비스 연동   
 // Create a recognizer that gets intents from LUIS, and add it to the bot
-// const LuisModelUrl = config.dev.Luis.url;
-const LuisModelUrl = process.env.LuisURL || config.dev.Luis.url;
+const LuisModelUrl = process.env.LuisURL;
 console.log(`connect LUIS ${LuisModelUrl}`);
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
 bot.recognizer(recognizer);
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// 2일차 15 page  수정 - 대화 다이얼 로그 샘플
+// 2일차 13 page  수정 - 대화 다이얼 로그 샘플
 // https://docs.microsoft.com/en-us/azure/bot-service/dotnet/bot-builder-dotnet-activities?view=azure-bot-service-3.0
 // conversationUpdate 참고
 bot.on('conversationUpdate', function (message) {
@@ -119,7 +117,7 @@ bot.on('conversationUpdate', function (message) {
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// 2일차 50 page  수정 - LUIS 서비스 연동   
+// 2일차 48 page  수정 - LUIS 서비스 연동   
 // 예) 날씨문의 
 // matches 영역에 직접 작성한 intent 명을 입력하시고, 응답 문구를 수정하세요.
 bot.dialog('날씨문의Dialog',
@@ -134,7 +132,7 @@ bot.dialog('날씨문의Dialog',
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// 2일차 16 page  수정 - 대화 다이얼 로그 샘플
+// 2일차 14 page  수정 - 대화 다이얼 로그 샘플
 // https://docs.microsoft.com/en-us/azure/bot-service/nodejs/bot-builder-nodejs-dialog-prompt?view=azure-bot-service-3.0
 // Send welcome when conversation with bot is started, by initiating the root dialog
 //bot.dialog('/', function (session) {
