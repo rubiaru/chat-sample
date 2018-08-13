@@ -4,18 +4,25 @@ var objectId = require('mongodb').ObjectID;
 var cosmosDB;
 var config = require('../config');
 
-var username = encodeURIComponent(config.dev.CosmosDB.userName);
-var password = encodeURIComponent(config.dev.CosmosDB.password);
-var cosmosHost = config.dev.CosmosDB.host;
-var cosmosPort = config.dev.CosmosDB.port;
-var connectString = `${cosmosHost}:${cosmosPort}/${config.dev.CosmosDB.name}?ssl=true&replicaSet=globaldb`;
+//var username = encodeURIComponent(config.dev.CosmosDB.userName);
+//var password = encodeURIComponent(config.dev.CosmosDB.password);
+//var cosmosHost = config.dev.CosmosDB.host;
+//var cosmosPort = config.dev.CosmosDB.port;
+//var connectString = `${cosmosHost}:${cosmosPort}/${config.dev.CosmosDB.name}?ssl=true&replicaSet=globaldb`;
+var username = encodeURIComponent(process.env.CosmosDBName || config.dev.CosmosDB.userName);
+var password = encodeURIComponent(process.env.CosmosDBPassword || config.dev.CosmosDB.password);
+var cosmosHost = process.env.CosmosDBHost || config.dev.CosmosDB.host;
+var cosmosPort = process.env.CosmosDBPort || config.dev.CosmosDB.port;
+var connectString = `${cosmosHost}:${cosmosPort}/${process.env.CosmosDBName || config.dev.CosmosDB.name}?ssl=true&replicaSet=globaldb`;
 var url = 'mongodb://';
 url += username;
 url += ':' + password;
 url += '@' + connectString;
 
-var chatlogDb = config.dev.CosmosDB.db;
-var logCollection = config.dev.CosmosDB.logCollection;
+//var chatlogDb = config.dev.CosmosDB.db;
+//var logCollection = config.dev.CosmosDB.logCollection;
+var chatlogDb = process.env.CosmosDBDB || config.dev.CosmosDB.db;
+var logCollection = process.env.CosmosDBCollection || config.dev.CosmosDB.logCollection;
 
 function Init(callback) {    
     mongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {

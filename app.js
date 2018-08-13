@@ -16,11 +16,8 @@ var log = require('./db/log');
 //------------------------------------------------------------------------------
 // 2일차 55 page  수정 - 측정을 위한 모듈 실행 코드 추가 
 const appInsights = require("applicationinsights");
-<<<<<<< HEAD
-appInsights.setup(config.dev.ApplicationInsights.key);
-=======
-appInsights.setup("c953574e-c381-4a21-882c-cfbf320df914");
->>>>>>> 739b301bf9cc74470edbe3935ba2c0908d675223
+// appInsights.setup(config.dev.ApplicationInsights.key);
+appInsights.setup(process.env.ApplicationInsightsKey || config.dev.ApplicationInsights.key);
 appInsights.start();
 //------------------------------------------------------------------------------
 
@@ -99,7 +96,8 @@ bot.use({
 //------------------------------------------------------------------------------
 // 2일차 46 page  수정 - LUIS 서비스 연동   
 // Create a recognizer that gets intents from LUIS, and add it to the bot
-const LuisModelUrl = config.dev.Luis.url;
+// const LuisModelUrl = config.dev.Luis.url;
+const LuisModelUrl = process.env.LuisURL || config.dev.Luis.url;
 console.log(`connect LUIS ${LuisModelUrl}`);
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
 bot.recognizer(recognizer);
