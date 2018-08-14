@@ -22,6 +22,16 @@ appInsights.start();
 
 // Setup Restify Server
 var server = restify.createServer();
+
+server.get('/keyboard', function (request, response, next) {
+    var keyboardResponse = {
+        'type': 'buttons',
+        'buttons': ['메뉴1','메뉴2','메뉴3']
+    }  
+    response.send(keyboardResponse);   
+    }   
+);
+
 server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log('%s listening to %s', server.name, server.url); 
     //------------------------------------------------------------------------------
