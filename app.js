@@ -20,54 +20,6 @@ appInsights.setup(process.env.ApplicationInsightsKey);
 appInsights.start();
 //------------------------------------------------------------------------------
 
-// Setup Restify Server
-var server = restify.createServer();
-
-server.get('/keyboard', function (request, response, next) {
-    var keyboardResponse = {
-        'type': 'buttons',
-        'buttons': ['메뉴1','메뉴2','메뉴3']
-    }  
-    response.send(keyboardResponse);   
-    }   
-);
-
-server.get('/keyboard', function (request, response, next) {
-        var keyboardResponse = {
-            'type': 'buttons',
-            'buttons': ['날씨알림']
-        }  
-        response.send(keyboardResponse);   
-    }   
-);
-
-server.post('/message', function(request, response, next) {
-        var msg = req.body.content;
-        console.log(`전달받은 메세지: ${msg}`);
-
-        var send = {};
-        switch(msg) {
-            case '날씨알림':
-                send = {
-                    'message' : {
-                        'text': '오늘날씨 알려줘?'
-                    }
-                }
-                break;
-            default:
-                send = {
-                    'message' : {
-                        'text': '알 수 없는 명령입니다.'
-                    }
-                }
-                break;
-        }
-
-        response.send(send);   
-
-    }
-);
-
 server.listen(process.env.port || process.env.PORT || 3978, function () {
     console.log('%s listening to %s', server.name, server.url); 
     //------------------------------------------------------------------------------
